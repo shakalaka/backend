@@ -33,12 +33,11 @@ class TaskRepository
     public function getTasks($page = 1)
     {
         $data = [];
-        $from = ($page === 1) ? 1 : $this->perPage * $page;
-        $to = ($page === 1) ? $page * $this->perPage : $page * $this->perPage + $this->perPage;
-
+        $from = ($page === 1) ? 1 : $this->perPage * $page - $this->perPage + 1;
+        $to = ($page === 1) ? $page * $this->perPage : $page * $this->perPage;
         $to = $this->limit($to);
 
-        for ($i = $from; $i < $to; $i++) {
+        for ($i = $from; $i <= $to; $i++) {
             $data[] = $this->getTask($i);
         }
 

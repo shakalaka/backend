@@ -31,7 +31,7 @@ class TaskController extends Controller
     {
         $page = $request->get('page', 1);
 
-        return response()->json($this->service->tasks($page));
+        return response()->json($this->service->tasks((int)$page));
     }
 
     /**
