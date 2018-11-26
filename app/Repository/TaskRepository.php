@@ -13,13 +13,15 @@ class TaskRepository
     const AUTHOR_NAME = 'Автор';
     const STATUS_NAME = 'Статус';
     const DESCRIPTION_NAME = 'Описание';
+    
+    const MAX_RESULT = 1000;
 
     /**
      * Количество записей на странице
      *
      * @var int
      */
-    private $onPage = 10;
+    private $perPage = 10;
 
     /**
      * Возвращает список тасков
@@ -30,16 +32,24 @@ class TaskRepository
      */
     public function getTasks($page = 1)
     {
-        $response = [];
-        $from = ($page === 1) ? 1 : $this->onPage * $page;
-        $to = ($page === 1) ? $page * $this->onPage : $page * $this->onPage + $this->onPage;
+        $data = [];
+        $from = ($page === 1) ? 1 : $this->perPage * $page;
+        $to = ($page === 1) ? $page * $this->perPage : $page * $this->perPage + $this->perPage;
 
         $to = $this->limit($to);
 
-        for ($i = $from; $i <= $to; $i++) {
-            $response[] = $this->getTask($i);
+        for ($i = $from; $i < $to; $i++) {
+            $data[] = $this->getTask($i);
         }
 
+        $response = [
+            'data' => $data,
+            'current_page' => $page,
+            'per_page' => $this->perPage,
+            'last_page' => self::MAX_RESULT/$this->perPage,
+            'from' => $from,
+            'to' => $to
+        ];
 
         return $response;
     }
@@ -75,8 +85,8 @@ class TaskRepository
      */
     private function limit($to)
     {
-        if ($to > 1000) {
-            $to = 1000;
+        if ($to > self::MAX_RESULT) {
+            $to = self::MAX_RESULT;
         }
 
         return $to;
